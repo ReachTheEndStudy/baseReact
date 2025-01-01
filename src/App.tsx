@@ -12,34 +12,53 @@ export function App() {
   const [list, setList] = useState<TaskType[]>(
     [{ id: 1, tasks: ['уроки', "занятия", "домашка"] }, { id: 2, tasks: ['бицепс', "бег", "плавание"] }]
   )
+
+  const setTask = (id: number, value: string) => {
+    const tasks = list.find(el => el.id === id)
+    if (tasks) {
+      tasks.tasks = [value, ...tasks.tasks]
+      setList([...list])
+    }
+  }
+
+  const removeTask = (id: number, taskToRemove: string) => {
+    const tasks = list.find(el => el.id === id)
+    if (tasks) {
+      const newTasksTasks = tasks.tasks.filter(el => el !== taskToRemove)
+      tasks.tasks = newTasksTasks
+      setList([...list])
+    }
+  }
+
+  return <div>
+    {list.map(tasks => <Tasks tasks={tasks} setTask={setTask} removeTask={removeTask} />)}
+  </div>
+}
+
+interface TasksPropsType {
+  tasks: TaskType
+  setTask: (id: number, value: string) => void
+  removeTask: (id: number, taskToRemove: string) => void
+}
+
+const Tasks = ({ tasks, setTask, removeTask }: TasksPropsType) => {
   const [value, setValue] = useState('')
-
-  // const setTask = () => {
-  //   setList([value, ...list])
-  //   setValue('')
-  // }
-
   const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.currentTarget.value)
   }
-
-  // const removeTask = (taskToRemove: string) => {
-  //   setList(list.filter(task => task !== taskToRemove))
-  // }
-
+  const setTaskHandler = () => {
+    setTask(tasks.id, value)
+    setValue('')
+  }
 
   return <div>
-    {list.map(el => <div>
-      <input value={value} onChange={setValueHandler} type='text' />
-      {/* <button onClick={setTask}>add task</button> */}
-      <button>add task</button>
-      <ul>
-        {el.tasks.map(
-          // (el, index) => <li key={`${el}_${index}`}>{el} <button onClick={() => removeTask(el)}>remove</button> </li>
-          (el, index) => <li key={`${el}_${index}`}>{el} <button>remove</button> </li>
-        )}
-      </ul>
-    </div>)}
+    <input value={value} onChange={setValueHandler} type='text' />
+    <button onClick={setTaskHandler}>add task</button>
+    <ul>
+      {tasks.tasks.map(
+        (el, index) => <li key={`${el}_${index}`}>{el} <button onClick={() => removeTask(tasks.id, el)}>remove</button> </li>
+      )}
+    </ul>
   </div>
 }
 
