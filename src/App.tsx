@@ -2,15 +2,24 @@ import { ChangeEvent, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import './App.css'
+import { Tasks } from './components/Tasks/Tasks';
 
-interface TaskType {
+export interface TaskType {
   id: number;
-  tasks: string[]
+  tasks: string[];
+  name: string;
 }
 
 export function App() {
+  const [value, setValue] = useState('')
+  const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.currentTarget.value)
+  }
   const [list, setList] = useState<TaskType[]>(
-    [{ id: 1, tasks: ['уроки', "занятия", "домашка"] }, { id: 2, tasks: ['бицепс', "бег", "плавание"] }]
+    [
+      { id: 1, name: 'Развитие', tasks: ['уроки', "занятия", "домашка"] },
+      { id: 2, name: 'Спорт', tasks: ['бицепс', "бег", "плавание"] }
+    ]
   )
 
   const setTask = (id: number, value: string) => {
@@ -30,35 +39,20 @@ export function App() {
     }
   }
 
-  return <div>
-    {list.map(tasks => <Tasks tasks={tasks} setTask={setTask} removeTask={removeTask} />)}
-  </div>
-}
-
-interface TasksPropsType {
-  tasks: TaskType
-  setTask: (id: number, value: string) => void
-  removeTask: (id: number, taskToRemove: string) => void
-}
-
-const Tasks = ({ tasks, setTask, removeTask }: TasksPropsType) => {
-  const [value, setValue] = useState('')
-  const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.currentTarget.value)
-  }
-  const setTaskHandler = () => {
-    setTask(tasks.id, value)
-    setValue('')
+  const addListTasks = () => {
+    if (value) {
+      const newListTasks = { id: new Date().getTime(), name: value, tasks: [] }
+      setList([newListTasks, ...list])
+      setValue('')
+    }
   }
 
-  return <div>
+  return <div className='wrapper'>
     <input value={value} onChange={setValueHandler} type='text' />
-    <button onClick={setTaskHandler}>add task</button>
-    <ul>
-      {tasks.tasks.map(
-        (el, index) => <li key={`${el}_${index}`}>{el} <button onClick={() => removeTask(tasks.id, el)}>remove</button> </li>
-      )}
-    </ul>
+    <button onClick={addListTasks}>add list tasks</button>
+    <div className='listTasksContainer'>
+      {list.map(tasks => <Tasks tasks={tasks} setTask={setTask} removeTask={removeTask} />)}
+    </div>
   </div>
 }
 
