@@ -1,3 +1,17 @@
 .wrapper {
-  border: 1px solid black
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.creteTaskContainer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.taskLineContainer {
+  display: flex;
+  justify-content: space-between;
 }
