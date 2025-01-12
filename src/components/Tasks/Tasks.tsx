@@ -5,7 +5,7 @@ import style from './Tasks.module.css'
 interface TasksPropsType {
   tasks: TaskType
   setTask: (id: number, value: string) => void
-  removeTask: (id: number, taskToRemove: string) => void
+  removeTask: (id: number, taskToRemoveId: number) => void
 }
 
 export const Tasks = ({ tasks, setTask, removeTask }: TasksPropsType) => {
@@ -22,13 +22,19 @@ export const Tasks = ({ tasks, setTask, removeTask }: TasksPropsType) => {
 
   return <div className={style.wrapper}>
     <h3>{tasks.name}</h3>
-    <input value={value} onChange={setValueHandler} type='text' />
-    <button onClick={setTaskHandler}>add task</button>
-    <ul>
+    <div className={style.creteTaskContainer}>
+      <input value={value} onChange={setValueHandler} type='text' />
+      <button onClick={setTaskHandler}>add task</button>
+    </div>
+
+    <div>
       {tasks.tasks.map(
-        (el, index) => <li key={`${el}_${index}`}>{el} <button onClick={() => removeTask(tasks.id, el)}>remove</button> </li>
+        (el, index) => <div
+          className={style.taskLineContainer} key={`${el}_${index}`}>
+          <span>{el.name}</span> <button onClick={() => removeTask(tasks.id, el.id)}>remove</button>
+        </div>
       )}
-    </ul>
+    </div>
   </div>
 }
 
