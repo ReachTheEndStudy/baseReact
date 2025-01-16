@@ -3,48 +3,29 @@ import { ChangeEvent, useState } from 'react'
 // import viteLogo from '/vite.svg'
 import style from './App.module.css'
 import { Tasks } from './components/Tasks/Tasks';
+import { listsData, ListType } from './data';
 
-export interface TaskType {
-  id: number;
-  tasks: { id: number, name: string }[];
-  name: string;
-}
+
+
+
 
 export function App() {
   const [value, setValue] = useState('')
   const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.currentTarget.value)
   }
-  const [list, setList] = useState<TaskType[]>(
-    [
-      { id: 1, name: 'Развитие', tasks: [{ id: 1, name: "уроки" }, { id: 2, name: "занятия" }, { id: 3, name: "домашка" }] },
-      { id: 2, name: 'Спорт', tasks: [{ id: 1, name: "бицепс" }, { id: 2, name: "бег" }, { id: 3, name: "плавание" }] }
-    ]
-  )
-
-  const setTask = (id: number, value: string) => {
-    const tasks = list.find(el => el.id === id)
-    if (tasks) {
-      tasks.tasks = [{ id: new Date().getTime(), name: value }, ...tasks.tasks]
-      setList([...list])
-    }
-  }
-
-  const removeTask = (id: number, taskToRemoveId: number) => {
-    const tasks = list.find(el => el.id === id)
-    if (tasks) {
-      const newTasksTasks = tasks.tasks.filter(el => el.id !== taskToRemoveId)
-      tasks.tasks = newTasksTasks
-      setList([...list])
-    }
-  }
+  const [listsTask, setListsTask] = useState<ListType[]>(listsData)
 
   const addListTasks = () => {
     if (value) {
-      const newListTasks = { id: new Date().getTime(), name: value, tasks: [] }
-      setList([newListTasks, ...list])
+      const newListTasks: ListType = { id: new Date().getTime(), name: value }
+      setListsTask([newListTasks, ...listsTask])
       setValue('')
     }
+  }
+
+  const removeListTasks = (id: number) => {
+    setListsTask(listsTask.filter(list => list.id !== id))
   }
 
   return <div className={style.wrapper}>
@@ -54,7 +35,11 @@ export function App() {
     </div>
 
     <div className={style.listTasksContainer}>
-      {list.map(tasks => <Tasks tasks={tasks} setTask={setTask} removeTask={removeTask} />)}
+      {listsTask.map(listTasks => <Tasks
+        key={listTasks.id}
+        listTasks={listTasks}
+        removeListTasks={removeListTasks}
+      />)}
     </div>
   </div>
 }
