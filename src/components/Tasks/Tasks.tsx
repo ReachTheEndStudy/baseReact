@@ -1,6 +1,7 @@
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import style from './Tasks.module.css'
-import { ListType, tasksData, TaskType } from "../../data"
+import { ListType, TaskType } from "../../type"
+import { FieldWithAddButton } from "../FieldWithAddButton/FieldWithAddButton"
 
 interface TasksPropsType {
   listTasks: ListType
@@ -10,17 +11,14 @@ interface TasksPropsType {
 const emptyTask = { id: -1, name: '', isDone: false }
 
 export const Tasks = ({ listTasks, removeListTasks }: TasksPropsType) => {
-  const [value, setValue] = useState('')
-  const [tasks, setTasks] = useState<TaskType[]>(tasksData[listTasks.id])
-  const [editableTask, setEditableTask] = useState<TaskType>(emptyTask)
-  const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.currentTarget.value)
-  }
 
-  const setTaskHandler = () => {
+  const [tasks, setTasks] = useState<TaskType[]>([])
+  const [editableTask, setEditableTask] = useState<TaskType>(emptyTask)
+
+
+  const setTaskHandler = (value: string) => {
     if (value) {
       setTasks([{ id: new Date().getTime(), name: value, isDone: false }, ...tasks])
-      setValue('')
     }
   }
 
@@ -46,15 +44,25 @@ export const Tasks = ({ listTasks, removeListTasks }: TasksPropsType) => {
   }
 
   const changeIsDoneTask = (id: number) => {
-    console.log(tasks.map(task => task.id === id ? { ...task, idDone: !task.isDone } : task))
-    setTasks(tasks.map(task => task.id === id ? { ...task, idDone: !task.isDone } : task))
+    setTasks(tasks.map(task => task.id === id ? { ...task, isDone: !task.isDone } : task))
   }
+
+  useEffect(() => {
+    const tasks = localStorage.getItem(listTasks.id.toString())
+
+    if (tasks) {
+      setTasks(JSON.parse(tasks))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem(listTasks.id.toString(), JSON.stringify(tasks))
+  }, [tasks])
 
   return <div className={style.wrapper}>
     <h3>{listTasks.name}</h3>
     <div className={style.creteTaskContainer}>
-      <input value={value} onChange={setValueHandler} type='text' />
-      <button onClick={setTaskHandler}>add task</button>
+      <FieldWithAddButton onClick={setTaskHandler}/>
       <button onClick={removeListTasksHandler}>remove list tasks</button>
     </div>
 
