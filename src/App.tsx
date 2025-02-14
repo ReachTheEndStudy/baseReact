@@ -1,26 +1,22 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import style from './App.module.css'
 import { Tasks } from './components/Tasks/Tasks';
-import { listsData, ListType } from './data';
+import { ListType } from './type';
+import { FieldWithAddButton } from './components/FieldWithAddButton/FieldWithAddButton';
 
 
 
 
 
 export function App() {
-  const [value, setValue] = useState('')
-  const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.currentTarget.value)
-  }
-  const [listsTask, setListsTask] = useState<ListType[]>(listsData)
+  const [listsTask, setListsTask] = useState<ListType[]>([])
 
-  const addListTasks = () => {
+  const addListTasks = (value: string) => {
     if (value) {
       const newListTasks: ListType = { id: new Date().getTime(), name: value }
       setListsTask([newListTasks, ...listsTask])
-      setValue('')
     }
   }
 
@@ -28,10 +24,21 @@ export function App() {
     setListsTask(listsTask.filter(list => list.id !== id))
   }
 
+  useEffect(() => {
+    const lists = localStorage.getItem('lists')
+
+    if (lists) {
+      setListsTask(JSON.parse(lists))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('lists', JSON.stringify(listsTask))
+  }, [listsTask])
+
   return <div className={style.wrapper}>
     <div className={style.creteListTasksContainer}>
-      <input value={value} onChange={setValueHandler} type='text' />
-      <button onClick={addListTasks}>add list tasks</button>
+      <FieldWithAddButton onClick={addListTasks} />
     </div>
 
     <div className={style.listTasksContainer}>
