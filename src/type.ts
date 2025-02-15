@@ -12,3 +12,5 @@ export interface TaskType {
 export interface TasksDataType {
   [key: number]: TaskType[]
 }
+
+export type RequestType = "Loading" | 'Error' | 'Success' | 'Empty'
