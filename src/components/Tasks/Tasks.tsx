@@ -1,7 +1,11 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, memo, useCallback, useEffect, useState } from "react"
 import style from './Tasks.module.css'
 import { ListType, TaskType } from "../../type"
 import { FieldWithAddButton } from "../FieldWithAddButton/FieldWithAddButton"
+
+function propsAreEqual(prevProps: Readonly<TasksPropsType>, nextProps: Readonly<TasksPropsType>): boolean {
+  return true
+}
 
 interface TasksPropsType {
   listTasks: ListType
@@ -10,17 +14,17 @@ interface TasksPropsType {
 
 const emptyTask = { id: -1, name: '', isDone: false }
 
-export const Tasks = ({ listTasks, removeListTasks }: TasksPropsType) => {
-
+export const Tasks = memo(({ listTasks, removeListTasks }: TasksPropsType) => {
+  console.log('render tasks ' + listTasks.name)
   const [tasks, setTasks] = useState<TaskType[]>([])
   const [editableTask, setEditableTask] = useState<TaskType>(emptyTask)
 
 
-  const setTaskHandler = (value: string) => {
+  const setTaskHandler = useCallback((value: string) => {
     if (value) {
-      setTasks([{ id: new Date().getTime(), name: value, isDone: false }, ...tasks])
+      setTasks(tasks => [{ id: new Date().getTime(), name: value, isDone: false }, ...tasks])
     }
-  }
+  }, [])
 
   const removeListTasksHandler = () => {
     removeListTasks(listTasks.id)
@@ -62,7 +66,7 @@ export const Tasks = ({ listTasks, removeListTasks }: TasksPropsType) => {
   return <div className={style.wrapper}>
     <h3>{listTasks.name}</h3>
     <div className={style.creteTaskContainer}>
-      <FieldWithAddButton onClick={setTaskHandler}/>
+      <FieldWithAddButton onClick={setTaskHandler} />
       <button onClick={removeListTasksHandler}>remove list tasks</button>
     </div>
 
@@ -86,5 +90,5 @@ export const Tasks = ({ listTasks, removeListTasks }: TasksPropsType) => {
       )}
     </div>
   </div>
-}
+}, propsAreEqual)
 

@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import style from './App.module.css'
@@ -7,16 +7,17 @@ import { ListType, RequestType } from './type';
 import { FieldWithAddButton } from './components/FieldWithAddButton/FieldWithAddButton';
 
 export function App() {
+  console.log('render App')
   const [listsTask, setListsTask] = useState<ListType[]>([])
   const [requestType, setRequestType] = useState<RequestType>('Loading')
 
-  const addListTasks = (value: string) => {
+  const addListTasks = useCallback((value: string) => {
     if (value) {
       const newListTasks: ListType = { id: new Date().getTime(), name: value }
-      setListsTask([newListTasks, ...listsTask])
+      setListsTask(listsTask => [newListTasks, ...listsTask])
       setRequestType('Success')
     }
-  }
+  }, [])
 
   const removeListTasks = (id: number) => {
     setListsTask(listsTask.filter(list => list.id !== id))
@@ -53,7 +54,7 @@ export function App() {
 
   return <div className={style.wrapper}>
     <div className={style.creteListTasksContainer}>
-      <FieldWithAddButton onClick={addListTasks} />
+      <FieldWithAddButton onClick={addListTasks}  />
     </div>
     {requestType === 'Loading' && <div className={style.spinner} />}
     {requestType === 'Empty' && <div className={style.emptyAndError}>Начните создавать задачи</div>}
