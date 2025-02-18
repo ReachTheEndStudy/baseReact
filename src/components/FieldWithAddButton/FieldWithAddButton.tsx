@@ -1,10 +1,10 @@
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, memo, useState } from "react"
 
 interface FieldWithAddButtonPropsType {
   onClick: (value: string) => void
 }
 
-export const FieldWithAddButton = ({ onClick }: FieldWithAddButtonPropsType) => {
+export const FieldWithAddButton = memo(({ onClick }: FieldWithAddButtonPropsType) => {
   const [value, setValue] = useState('')
   const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.currentTarget.value)
@@ -20,4 +20,4 @@ export const FieldWithAddButton = ({ onClick }: FieldWithAddButtonPropsType) => 
     <input value={value} onChange={setValueHandler} type='text' />
     <button onClick={onClickHandler}>add task</button>
   </>
-}
+})
