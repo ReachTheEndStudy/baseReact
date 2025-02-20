@@ -2,6 +2,8 @@ import { ChangeEvent, memo, useCallback, useEffect, useState } from "react"
 import style from './Tasks.module.css'
 import { ListType, TaskType } from "../../type"
 import { FieldWithAddButton } from "../FieldWithAddButton/FieldWithAddButton"
+import { Delete, Edit, Save } from "@mui/icons-material"
+import { Checkbox, IconButton, TextField } from "@mui/material"
 
 function propsAreEqual(prevProps: Readonly<TasksPropsType>, nextProps: Readonly<TasksPropsType>): boolean {
   return true
@@ -67,7 +69,7 @@ export const Tasks = memo(({ listTasks, removeListTasks }: TasksPropsType) => {
     <h3>{listTasks.name}</h3>
     <div className={style.creteTaskContainer}>
       <FieldWithAddButton onClick={setTaskHandler} />
-      <button onClick={removeListTasksHandler}>remove list tasks</button>
+      <IconButton size="small" color="primary" onClick={removeListTasksHandler}><Delete /></IconButton>
     </div>
 
     <div>
@@ -77,13 +79,15 @@ export const Tasks = memo(({ listTasks, removeListTasks }: TasksPropsType) => {
           return <div
             className={style.taskLineContainer} key={`${task}_${index}`}>
             <div>
-              <input type='checkbox' checked={task.isDone} onChange={() => changeIsDoneTask(task.id)} />
-              {isEdit ? <input type="text" value={editableTask.name} onChange={setEditableTaskName} /> : <span>{task.name}</span>}
+              <Checkbox checked={task.isDone} onChange={() => changeIsDoneTask(task.id)} color="secondary" />
+              {isEdit
+                ? <TextField size="small" value={editableTask.name} onChange={setEditableTaskName} type='text' variant="outlined" />
+                : <span>{task.name}</span>}
             </div>
 
             <div>
-              <button onClick={() => editTask(task, isEdit)}>{isEdit ? 'save' : 'edit'}</button>
-              <button onClick={() => removeTask(task.id)}>remove</button>
+              <IconButton size="small" color="primary" onClick={() => editTask(task, isEdit)}>{isEdit ? <Save /> : <Edit />}</IconButton>
+              <IconButton size="small" color="primary" onClick={() => removeTask(task.id)}><Delete /></IconButton>
             </div>
           </div>
         }
