@@ -1,3 +1,5 @@
+import { Add } from "@mui/icons-material"
+import { IconButton, TextField } from "@mui/material"
 import { ChangeEvent, memo, useState } from "react"
 
 interface FieldWithAddButtonPropsType {
@@ -17,7 +19,7 @@ export const FieldWithAddButton = memo(({ onClick }: FieldWithAddButtonPropsType
 
 
   return <>
-    <input value={value} onChange={setValueHandler} type='text' />
-    <button onClick={onClickHandler}>add task</button>
+    <TextField size="small" value={value} onChange={setValueHandler} type='text' variant="outlined" />
+    <IconButton size="small" color="primary" onClick={onClickHandler}><Add /></IconButton>
   </>
 })
