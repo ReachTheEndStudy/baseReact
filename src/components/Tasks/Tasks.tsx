@@ -4,6 +4,8 @@ import { ListType, TaskType } from "../../type"
 import { FieldWithAddButton } from "../FieldWithAddButton/FieldWithAddButton"
 import { Delete, Edit, Save } from "@mui/icons-material"
 import { Checkbox, IconButton, TextField } from "@mui/material"
+import { useListsStore } from "../../store/lists"
+import { useTasksStore } from "../../store/tasts"
 
 function propsAreEqual(prevProps: Readonly<TasksPropsType>, nextProps: Readonly<TasksPropsType>): boolean {
   return true
@@ -11,46 +13,16 @@ function propsAreEqual(prevProps: Readonly<TasksPropsType>, nextProps: Readonly<
 
 interface TasksPropsType {
   listTasks: ListType
-  removeListTasks: (id: number) => void
 }
 
-const emptyTask = { id: -1, name: '', isDone: false }
-
-export const Tasks = memo(({ listTasks, removeListTasks }: TasksPropsType) => {
-  console.log('render tasks ' + listTasks.name)
-  const [tasks, setTasks] = useState<TaskType[]>([])
-  const [editableTask, setEditableTask] = useState<TaskType>(emptyTask)
 
 
-  const setTaskHandler = useCallback((value: string) => {
-    if (value) {
-      setTasks(tasks => [{ id: new Date().getTime(), name: value, isDone: false }, ...tasks])
-    }
-  }, [])
+export const Tasks = memo(({ listTasks }: TasksPropsType) => {
+  const { removeListTasks } = useListsStore()
+  const { tasks, editableTask, addTasks, editTask, setEditableTask, removeTask, changeIsDoneTask, setTasks } = useTasksStore()
 
-  const removeListTasksHandler = () => {
-    removeListTasks(listTasks.id)
-  }
-
-  const editTask = (task: TaskType, isEdit: boolean) => {
-    if (isEdit) {
-      setTasks(tasks.map(task => task.id === editableTask.id ? editableTask : task))
-      setEditableTask(emptyTask)
-    } else {
-      setEditableTask(task)
-    }
-  }
-
-  const setEditableTaskName = (event: ChangeEvent<HTMLInputElement>) => {
+  const setEditableTaskNameHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setEditableTask({ ...editableTask, name: event.currentTarget.value })
-  }
-
-  const removeTask = (id: number) => {
-    setTasks(tasks.filter(tasks => tasks.id !== id))
-  }
-
-  const changeIsDoneTask = (id: number) => {
-    setTasks(tasks.map(task => task.id === id ? { ...task, isDone: !task.isDone } : task))
   }
 
   useEffect(() => {
@@ -68,8 +40,8 @@ export const Tasks = memo(({ listTasks, removeListTasks }: TasksPropsType) => {
   return <div className={style.wrapper}>
     <h3>{listTasks.name}</h3>
     <div className={style.creteTaskContainer}>
-      <FieldWithAddButton onClick={setTaskHandler} />
-      <IconButton size="small" color="primary" onClick={removeListTasksHandler}><Delete /></IconButton>
+      <FieldWithAddButton onClick={addTasks} />
+      <IconButton size="small" color="primary" onClick={() => removeListTasks(listTasks.id)}><Delete /></IconButton>
     </div>
 
     <div>
@@ -81,7 +53,7 @@ export const Tasks = memo(({ listTasks, removeListTasks }: TasksPropsType) => {
             <div>
               <Checkbox checked={task.isDone} onChange={() => changeIsDoneTask(task.id)} color="secondary" />
               {isEdit
-                ? <TextField size="small" value={editableTask.name} onChange={setEditableTaskName} type='text' variant="outlined" />
+                ? <TextField size="small" value={editableTask.name} onChange={setEditableTaskNameHandler} type='text' variant="outlined" />
                 : <span>{task.name}</span>}
             </div>
 

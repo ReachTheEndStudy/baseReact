@@ -1,69 +1,34 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import { useEffect } from 'react';
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
-import style from './App.module.css'
-import { Tasks } from './components/Tasks/Tasks';
-import { ListType, RequestType } from './type';
+import style from './App.module.css';
 import { FieldWithAddButton } from './components/FieldWithAddButton/FieldWithAddButton';
+import { Tasks } from './components/Tasks/Tasks';
+import { useListsStore } from './store/lists';
 
 export function App() {
-  console.log('render App')
-  const [listsTask, setListsTask] = useState<ListType[]>([])
-  const [requestType, setRequestType] = useState<RequestType>('Loading')
-
-  const addListTasks = useCallback((value: string) => {
-    if (value) {
-      const newListTasks: ListType = { id: new Date().getTime(), name: value }
-      setListsTask(listsTask => [newListTasks, ...listsTask])
-      setRequestType('Success')
-    }
-  }, [])
-
-  const removeListTasks = (id: number) => {
-    setListsTask(listsTask.filter(list => list.id !== id))
-  }
-
-  const fetchLists = () => {
-    setRequestType('Loading')
-    setTimeout(() => {
-      const lists = localStorage.getItem('lists')
-      if (lists) {
-        const listsTransform = JSON.parse(lists)
-
-        if (Math.random() < 0.8) {
-          setListsTask(listsTransform)
-          setRequestType(listsTransform.length ? 'Success' : 'Empty')
-        } else {
-          setRequestType('Error')
-        }
-      } else {
-        setRequestType(Math.random() < 0.1 ? 'Error' : 'Empty')
-      }
-    }, 2000)
-  }
-
+  const { lists, requestType, addListTasks, fetchLists } = useListsStore()
   useEffect(() => {
     fetchLists()
   }, [])
 
   useEffect(() => {
     if (requestType === 'Success' || requestType === 'Empty') {
-      localStorage.setItem('lists', JSON.stringify(listsTask))
+      localStorage.setItem('lists', JSON.stringify(lists))
     }
-  }, [listsTask])
+  }, [lists])
 
   return <div className={style.wrapper}>
     <div className={style.creteListTasksContainer}>
-      <FieldWithAddButton onClick={addListTasks}  />
+      <FieldWithAddButton onClick={addListTasks} />
     </div>
     {requestType === 'Loading' && <div className={style.spinner} />}
     {requestType === 'Empty' && <div className={style.emptyAndError}>Начните создавать задачи</div>}
     {requestType === 'Error' && <div className={style.emptyAndError}><button onClick={fetchLists}>Повторите запрос</button></div>}
     {requestType === 'Success' && <div className={style.listTasksContainer}>
-      {listsTask.map(listTasks => <Tasks
+      {lists.map(listTasks => <Tasks
         key={listTasks.id}
         listTasks={listTasks}
-        removeListTasks={removeListTasks}
       />)}
     </div>}
   </div>
