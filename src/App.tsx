@@ -5,42 +5,17 @@ import style from './App.module.css'
 import { Tasks } from './components/Tasks/Tasks';
 import { ListType, RequestType } from './type';
 import { FieldWithAddButton } from './components/FieldWithAddButton/FieldWithAddButton';
+import { useListsStore } from './store/lists';
 
 export function App() {
   console.log('render App')
-  const [listsTask, setListsTask] = useState<ListType[]>([])
-  const [requestType, setRequestType] = useState<RequestType>('Loading')
+  // const [bears, increasePopulation] = useBearStore((state) => [state.bears, state.increasePopulation])
+  // const {bears, increasePopulation} = useBearStore((state) => ({ bears: state.bears, increasePopulation: state.increasePopulation }))
+  // const {bears, increasePopulation} = useBearStore((state) => state)
+  // const {bears, increasePopulation} = useBearStore()
+  const { requestType, listsTask, removeListTasks, addListTasks, fetchLists } = useListsStore()
 
-  const addListTasks = useCallback((value: string) => {
-    if (value) {
-      const newListTasks: ListType = { id: new Date().getTime(), name: value }
-      setListsTask(listsTask => [newListTasks, ...listsTask])
-      setRequestType('Success')
-    }
-  }, [])
-
-  const removeListTasks = (id: number) => {
-    setListsTask(listsTask.filter(list => list.id !== id))
-  }
-
-  const fetchLists = () => {
-    setRequestType('Loading')
-    setTimeout(() => {
-      const lists = localStorage.getItem('lists')
-      if (lists) {
-        const listsTransform = JSON.parse(lists)
-
-        if (Math.random() < 0.8) {
-          setListsTask(listsTransform)
-          setRequestType(listsTransform.length ? 'Success' : 'Empty')
-        } else {
-          setRequestType('Error')
-        }
-      } else {
-        setRequestType(Math.random() < 0.1 ? 'Error' : 'Empty')
-      }
-    }, 2000)
-  }
+  const addListTasksHandler = useCallback(addListTasks, [])
 
   useEffect(() => {
     fetchLists()
@@ -54,7 +29,7 @@ export function App() {
 
   return <div className={style.wrapper}>
     <div className={style.creteListTasksContainer}>
-      <FieldWithAddButton onClick={addListTasks}  />
+      <FieldWithAddButton onClick={addListTasksHandler} />
     </div>
     {requestType === 'Loading' && <div className={style.spinner} />}
     {requestType === 'Empty' && <div className={style.emptyAndError}>Начните создавать задачи</div>}
