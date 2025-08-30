@@ -1,46 +1,40 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-import style from './App.module.css'
-import { Tasks } from './components/Tasks/Tasks';
-import { ListType, RequestType } from './type';
+import { useState } from 'react';
+import style from './App.module.css';
 import { FieldWithAddButton } from './components/FieldWithAddButton/FieldWithAddButton';
-import { useListsStore } from './store/lists';
+
+interface WeatherDataType {
+  location: {
+    name: string;
+  };
+  current: {
+    temp_c: number;
+    condition: {
+      text: string;
+      icon: string;
+    }
+  }
+}
 
 export function App() {
-  console.log('render App')
-  // const [bears, increasePopulation] = useBearStore((state) => [state.bears, state.increasePopulation])
-  // const {bears, increasePopulation} = useBearStore((state) => ({ bears: state.bears, increasePopulation: state.increasePopulation }))
-  // const {bears, increasePopulation} = useBearStore((state) => state)
-  // const {bears, increasePopulation} = useBearStore()
-  const { requestType, listsTask, removeListTasks, addListTasks, fetchLists } = useListsStore()
 
-  const addListTasksHandler = useCallback(addListTasks, [])
+  const [weatherData, setWeatherData] = useState<WeatherDataType | null>(null)
 
-  useEffect(() => {
-    fetchLists()
-  }, [])
+  const onClickHandler = (city: string) => {
+    fetch(`https://api.weatherapi.com/v1/current.json?key=425af8de2ab647949c9165411252407&q=${city}`)
+      .then(res => {
+        res.json().then(res => setWeatherData(res))
+      })
+  }
 
-  useEffect(() => {
-    if (requestType === 'Success' || requestType === 'Empty') {
-      localStorage.setItem('lists', JSON.stringify(listsTask))
-    }
-  }, [listsTask])
+  console.log(weatherData)
 
   return <div className={style.wrapper}>
-    <div className={style.creteListTasksContainer}>
-      <FieldWithAddButton onClick={addListTasksHandler} />
-    </div>
-    {requestType === 'Loading' && <div className={style.spinner} />}
-    {requestType === 'Empty' && <div className={style.emptyAndError}>Начните создавать задачи</div>}
-    {requestType === 'Error' && <div className={style.emptyAndError}><button onClick={fetchLists}>Повторите запрос</button></div>}
-    {requestType === 'Success' && <div className={style.listTasksContainer}>
-      {listsTask.map(listTasks => <Tasks
-        key={listTasks.id}
-        listTasks={listTasks}
-        removeListTasks={removeListTasks}
-      />)}
-    </div>}
+    <FieldWithAddButton onClick={onClickHandler} />
+    {!!weatherData ? <div>
+      <div>{weatherData.location.name} - {weatherData.current.temp_c}</div>
+      <div>Погодные условия: {weatherData.current.condition.text} <img src={weatherData.current.condition.icon} /></div>
+
+    </div> : <div>Сделайте запрос</div>}
   </div>
 }
 

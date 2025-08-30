@@ -1,37 +1,3 @@
 .wrapper {
   text-align: center;
 }
-
-.creteListTasksContainer {
-  display: flex;
-  justify-content: center;
-}
-
-.listTasksContainer {
-  margin-top: 12px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.emptyAndError {
-  margin-top: 20px;
-}
-
-.spinner{
-  width: 200px;
-  height: 200px;
-  background-color: black;
-  animation: 1s linear 0s infinite rotate;
-  margin: 150px;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
