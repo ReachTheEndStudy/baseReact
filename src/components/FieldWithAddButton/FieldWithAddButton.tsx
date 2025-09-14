@@ -3,10 +3,11 @@ import { IconButton, TextField } from "@mui/material"
 import { ChangeEvent, memo, useState } from "react"
 
 interface FieldWithAddButtonPropsType {
+  loading: boolean
   onClick: (value: string) => void
 }
 
-export const FieldWithAddButton = memo(({ onClick }: FieldWithAddButtonPropsType) => {
+export const FieldWithAddButton = memo(({ loading, onClick }: FieldWithAddButtonPropsType) => {
   const [value, setValue] = useState('')
   const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.currentTarget.value)
@@ -17,9 +18,8 @@ export const FieldWithAddButton = memo(({ onClick }: FieldWithAddButtonPropsType
     setValue('')
   }
 
-
   return <>
     <TextField size="small" value={value} onChange={setValueHandler} type='text' variant="outlined" />
-    <IconButton size="small" color="primary" onClick={onClickHandler}><Add /></IconButton>
+    <IconButton loading={loading} size="small" color="primary" onClick={onClickHandler}><Add /></IconButton>
   </>
 })
