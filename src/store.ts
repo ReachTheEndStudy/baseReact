@@ -16,15 +16,23 @@ interface WeatherDataType {
 interface UseWeatherType {
     weather: WeatherDataType | null
     loading: boolean
+    errorText: string;
     fetchWeather: (city: string) => Promise<void>
 }
 
 export const useWeather = create<UseWeatherType>((set) => ({
     weather: null,
     loading: false,
+    errorText: '',
     fetchWeather: async (city: string) => {
         try {
-            set({ loading: true })
+            set({ loading: true, errorText: '', weather: null })
+            if (!city) {
+                throw new Error('Введи хоть что-нибуть')
+            }
+            if (!/^[a-zA-Z-_\s]+$/.test(city)) {
+                throw new Error('Введите англ буквы или _ или -')
+            }
             // const res = await fetch(`https://321312api.com/v1/current.json?key=425af8de2ab647949c9165411252407&q=${city}`)
             const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=425af8de2ab647949c9165411252407&q=${city}`)
 
@@ -37,11 +45,12 @@ export const useWeather = create<UseWeatherType>((set) => ({
             }
 
         } catch (e) {
-            if (e instanceof Error) {
-                console.error(e.message ? e.message : 'Неизвестная ошибка')
-            } else {
-                console.error('Неизвестная ошибка')
+            let innerErrorText = 'Неизвестная ошибка'
+            if (e instanceof Error && e.message) {
+                innerErrorText = e.message
             }
+            console.error(innerErrorText)
+            set({ errorText: innerErrorText })
         } finally {
             set({ loading: false })
         }
