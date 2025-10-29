@@ -1,31 +1,54 @@
 import { Add } from "@mui/icons-material"
 import { IconButton, TextField } from "@mui/material"
-import { ChangeEvent, memo, useEffect, useState } from "react"
+import { ChangeEvent, memo, useCallback, useEffect, useState } from "react"
 import s from './FieldWithAddButton.module.css'
+import { useDebounce } from "../../hoocs/useDebounce"
 
 interface FieldWithAddButtonPropsType {
   loading: boolean
   errorText: string;
-  onClick: (value: string) => void
+  action: (value: string) => void
 }
 
-export const FieldWithAddButton = memo(({ loading, errorText, onClick }: FieldWithAddButtonPropsType) => {
+function debounce(action: any, delay = 1000) {
+  let id: number | undefined
+  return function (...args: any) {
+    clearTimeout(id)
+    id = setTimeout(() => {
+      action(...args)
+    }, delay)
+  }
+}
+
+export const FieldWithAddButton = memo(({ loading, errorText, action }: FieldWithAddButtonPropsType) => {
   const [value, setValue] = useState('')
   const [isError, setIsError] = useState(!!errorText)
 
+  const valueD = useDebounce(value)
+
+  const actionD = useCallback(debounce(action), [])
+
   const setValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.currentTarget.value)
+    // actionD(event.currentTarget.value)
     setIsError(false)
   }
 
   const onClickHandler = () => {
-    onClick(value)
+    action(value)
     setValue('')
   }
 
   useEffect(() => {
     setIsError(!!errorText)
   }, [errorText])
+
+  useEffect(() => {
+    if (valueD) {
+      actionD(valueD)
+    }
+
+  }, [valueD])
 
   return <div className={s.wrapper}>
     <div>
