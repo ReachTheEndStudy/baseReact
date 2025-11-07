@@ -1,17 +1,21 @@
 import { create } from 'zustand'
+import { z } from "zod/mini";
 
-interface WeatherDataType {
-    location: {
-        name: string;
-    };
-    current: {
-        temp_c: number;
-        condition: {
-            text: string;
-            icon: string;
-        }
-    }
-}
+const WeatherDataSchema = z.object({
+    location: z.object({
+        name: z.string()
+    }),
+    current: z.object({
+        temp_c: z.number(),
+        condition: z.object({
+            text: z.string(),
+            icon: z.string()
+        }),
+    }),
+})
+
+type WeatherDataType = z.infer<typeof WeatherDataSchema>
+
 
 interface UseWeatherType {
     weather: WeatherDataType | null
@@ -39,6 +43,7 @@ export const useWeather = create<UseWeatherType>((set) => ({
 
             const transformRes = await res.json()
             if (res.ok) {
+                WeatherDataSchema.parse(transformRes)
                 set({ weather: transformRes })
             } else {
                 throw new Error(transformRes.error.message)
