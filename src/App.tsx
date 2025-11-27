@@ -1,19 +1,23 @@
+import { Link, Route, Switch } from 'wouter';
 import style from './App.module.css';
 import { FieldWithAddButton } from './components/FieldWithAddButton/FieldWithAddButton';
 import { useWeather } from './store';
+import { SearchScreen } from './screens/SearchScreen/SearchScreen';
+import { CityScreen } from './screens/CityScreen/CityScreen';
 
 
 
 export function App() {
-  const {weather, loading, errorText, fetchWeather} = useWeather()
-
-  return <div className={style.wrapper}>
-    <FieldWithAddButton action={fetchWeather} loading={loading} errorText={errorText}/>
-    {!!weather ? <div>
-      <div>{weather.location.name} - {weather.current.temp_c}</div>
-      <div>Погодные условия: {weather.current.condition.text} <img src={weather.current.condition.icon} /></div>
-
-    </div> : <div>Сделайте запрос</div>}
-  </div>
+  return <Switch>
+    <Route path="/" component={SearchScreen} />
+    <Route path="/weather/:city" >
+      {params => <CityScreen city={params.city} />}
+    </Route>
+    <Route path="*">
+      <div>
+        <Link to="/">Home</Link>
+        This is rendered when nothing above has matched
+      </div></Route>
+  </Switch>;
 }
 
