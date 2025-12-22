@@ -9,7 +9,7 @@ interface CityScreenPropsType {
 
 export const CityScreen = ({ city }: CityScreenPropsType) => {
     const { weather, loading, errorText, fetchWeather } = useWeather()
-    const [location, setLocation] = useLocation();
+    const [, setLocation] = useLocation();
 
     useEffect(() => {
         fetchWeather(city)
