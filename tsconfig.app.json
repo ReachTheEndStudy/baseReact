@@ -1,26 +1,84 @@
 {
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // Type Checking - настройки поведения транспилятора TypeScript
+    // Разрешить написание кода, который никогда не выполнится
+    "allowUnreachableCode": false,
+    // Запрещает передавать undefined полям, которые не должны существовать
+    "exactOptionalPropertyTypes": true,
+    // Проверяет, что в конструкции switch-case укаждого case
+    // есть явный указатель на продолжение/прерывание
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    // Запрещает использовать код, где ts сам выводит тип any
+    "noImplicitAny": true,
+    // Требует ключевого слова override при переопределение метода класса 
+    "noImplicitOverride": true,
+    // Проверяет, что все ветки функции возвращают значения
+    "noImplicitReturns": true,
+    // Запрещает наличие неиспользуемых локальных переменных
+    "noUnusedLocals": true,
+    // Запрещает наличие неиспользуемых параметров функций
+    "noUnusedParameters": true,
+    // Включает все флаги семейства срогово режима -
+    // доп проверка по типам и более явное поведение кода
+    "strict": true,
+    //
+    // Modules - настройки всей модульной системы проекта
+    // Разрешает импортировать TypeScript-файлы с их реальными расширениями
+    "allowImportingTsExtensions": true,
+    // Позволяет использовать модули с помощью import/export
+    "module": "ESNext", // (современный способ)
+    // Oпределяет как именно TypeScript ищет файлы модулей
+    "moduleResolution": "bundler", // (современный способ)
+    // Следит за ипортами без явного вызова из них данных, например
+    // import "./config" в котором выполняется side эффект
+    "noUncheckedSideEffectImports": true,
+    // Указывает, какие глобальные типы из @types/* пакетов
+    // нужно подключать в проект
+    "types": [
+      "vite/client", // будет игнорировать остальные типы, 
+      // которые не нужны в фронтовом проекте
+    ],
+    //
+    // Emit - это всё, что связано с выходными файлами TypeScript
+    // Разрешает ts только проверть типы без генерации доп файлов
+    // при сборке не будут лишних файлов
+    "noEmit": true,
+    //
+    // Interop Constraints - настройки стыковки TypeScript с
+    // JavaScript-экосистемой и bundlerами
+    // Гарантирует, что каждый TS-файл можно безопасно скомпилировать
+    // по отдельности, без знания всего проекта.
+    "isolatedModules": true,
+    //
+    // Language and Environment - настройки того, каким языком
+    // ты пишешь и в какой среде этот код будет работать
+    // Объясянет транспилятору, как работать с расширением tsx
+    "jsx": "react-jsx",
+    // Определяет, какие встроенные API и глобальные типы будут доступны вашему проекту
+    "lib": [
+      "ESNext", // самые новые фичи
+      "DOM", // document, window, fetch
+      "DOM.Iterable", // for...of по NodeList
+    ],
+    // Cчитать ли файл модульным автоматически или только при наличии import / export
+    "moduleDetection": "force", // считает каждый файл модулем даже если в нём нет import / export
+    // Определяет, в какую версию JavaScript будет компилироваться ваш код
+    "target": "ES2022",
+    // Определяет, как именно компилировать поля классов в JavaScript:
+    // через современный стандарт define или через старые присваивания
+    "useDefineForClassFields": true,
+    //
+    // Projects - настройка общей информации о проекте
+    // Файл, в котором TypeScript запоминает результаты прошлой проверки,
+    // чтобы в следующий раз работать в разы быстрее
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    //
+    // Completeness - про полноту проверки деклараций
+    // Отключает проверку всех .d.ts
+    "skipLibCheck": true, // Сильно ускоряет tsc, убирает ошибки встроенных
+    // библиотек на которые мы не имеем воздействия 
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

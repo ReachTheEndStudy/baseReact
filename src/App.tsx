@@ -1,7 +1,4 @@
 import { Link, Route, Switch } from 'wouter';
-import style from './App.module.css';
-import { FieldWithAddButton } from './components/FieldWithAddButton/FieldWithAddButton';
-import { useWeather } from './store';
 import { SearchScreen } from './screens/SearchScreen/SearchScreen';
 import { CityScreen } from './screens/CityScreen/CityScreen';
 
