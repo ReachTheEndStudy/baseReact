@@ -5,12 +5,12 @@ export interface ListType {
 
 export interface TaskType {
   id: number;
-  name: string
-  isDone: boolean
+  name: string;
+  isDone: boolean;
 }
 
 export interface TasksDataType {
-  [key: number]: TaskType[]
+  [key: number]: TaskType[];
 }
 
-export type RequestType = "Loading" | 'Error' | 'Success' | 'Empty'
+export type RequestType = 'Loading' | 'Error' | 'Success' | 'Empty';
